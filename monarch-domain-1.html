@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monarch Domain — SMP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #8a6f2e;
+    --crimson: #8b1a1a;
+    --crimson-light: #b52020;
+    --dark: #0a0806;
+    --dark2: #110d08;
+    --dark3: #1a1208;
+    --parchment: #d4b896;
+    --parchment-dim: #9a7d5e;
+    --white: #f5ead8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'EB Garamond', serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,26,26,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 100% at 50% 50%, #110d08 30%, #0a0806 100%);
+  }
+
+  /* Animated crest rings */
+  .crest-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.12);
+    animation: ringPulse 6s ease-in-out infinite;
+  }
+  .crest-ring:nth-child(1) { width: 400px; height: 400px; animation-delay: 0s; }
+  .crest-ring:nth-child(2) { width: 600px; height: 600px; animation-delay: 1s; border-color: rgba(201,168,76,0.07); }
+  .crest-ring:nth-child(3) { width: 800px; height: 800px; animation-delay: 2s; border-color: rgba(201,168,76,0.04); }
+
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.03); opacity: 0.6; }
+  }
+
+  /* Corner ornaments */
+  .corner {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    opacity: 0.25;
+  }
+  .corner svg { width: 100%; height: 100%; }
+  .corner-tl { top: 2rem; left: 2rem; }
+  .corner-tr { top: 2rem; right: 2rem; transform: scaleX(-1); }
+  .corner-bl { bottom: 2rem; left: 2rem; transform: scaleY(-1); }
+  .corner-br { bottom: 2rem; right: 2rem; transform: scale(-1); }
+
+  .crown-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    animation: floatCrown 4s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 20px rgba(201,168,76,0.5));
+  }
+  @keyframes floatCrown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(180deg, #f5d98a 0%, #c9a84c 40%, #8a6f2e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    animation: fadeUp 1s ease both;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    letter-spacing: 0.4em;
+    color: var(--parchment-dim);
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1s ease 0.2s both;
+  }
+
+  .divider-ornament {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1s ease 0.3s both;
+  }
+  .divider-ornament::before,
+  .divider-ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+    max-width: 200px;
+  }
+  .divider-ornament span {
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+
+  .hero-tagline {
+    font-size: clamp(1rem, 2.5vw, 1.35rem);
+    color: var(--parchment);
+    font-style: italic;
+    max-width: 500px;
+    line-height: 1.8;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1s ease 0.4s both;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1s ease 0.5s both;
+  }
+
+  .btn-primary {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.9rem 2.5rem;
+    background: linear-gradient(135deg, #c9a84c 0%, #8a6f2e 100%);
+    color: var(--dark);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    font-weight: 600;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #f5d98a 0%, #c9a84c 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-secondary {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.9rem 2.5rem;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    cursor: pointer;
+    transition: all 0.3s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-secondary:hover {
+    background: rgba(201,168,76,0.08);
+    border-color: var(--gold);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--parchment-dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+    animation: fadeUp 1s ease 1s both;
+    z-index: 2;
+  }
+  .scroll-arrow {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    animation: scrollArrow 2s ease-in-out infinite;
+  }
+  @keyframes scrollArrow {
+    0%, 100% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(0.5); opacity: 0.4; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(10,8,6,0.95), transparent);
+    backdrop-filter: blur(4px);
+    transition: background 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(10,8,6,0.97);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .nav-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--parchment-dim);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+  }
+  .section-rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .section-rule::before, .section-rule::after {
+    content: '';
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim));
+  }
+  .section-rule::after { background: linear-gradient(to left, transparent, var(--gold-dim)); }
+  .section-rule span { color: var(--gold); font-size: 1rem; }
+
+  /* ── JOIN SECTION ── */
+  #join {
+    background: linear-gradient(135deg, var(--dark2) 0%, var(--dark3) 100%);
+    max-width: 100%;
+    padding: 6rem 2rem;
+    border-top: 1px solid rgba(201,168,76,0.08);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  #join::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(139,26,26,0.06) 0%, transparent 70%);
+  }
+  #join .inner { max-width: 1100px; margin: 0 auto; }
+
+  .ip-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .ip-card {
+    background: rgba(201,168,76,0.04);
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s;
+    cursor: pointer;
+    clip-path: polygon(16px 0%, 100% 0%, calc(100% - 16px) 100%, 0% 100%);
+  }
+  .ip-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(201,168,76,0.04);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .ip-card:hover { border-color: rgba(201,168,76,0.4); }
+  .ip-card:hover::before { opacity: 1; }
+
+  .ip-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 0.75rem;
+  }
+  .ip-type {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1rem;
+    color: var(--gold-light);
+    margin-bottom: 0.75rem;
+  }
+  .ip-address {
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    color: var(--white);
+    background: rgba(0,0,0,0.3);
+    padding: 0.6rem 1rem;
+    border-left: 2px solid var(--gold-dim);
+    word-break: break-all;
+    margin-bottom: 1rem;
+  }
+  .copy-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    background: none;
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+  }
+  .copy-btn:hover { color: var(--gold); border-color: var(--gold-dim); background: rgba(201,168,76,0.06); }
+  .copy-btn.copied { color: #6dbf67; border-color: #6dbf67; }
+
+  .version-note {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--parchment-dim);
+    font-style: italic;
+    font-size: 0.95rem;
+  }
+
+  /* ── FEATURES ── */
+  #features { position: relative; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    border: 1px solid rgba(201,168,76,0.1);
+    background: rgba(201,168,76,0.02);
+    position: relative;
+    transition: all 0.4s;
+    overflow: hidden;
+  }
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .feature-card:hover { background: rgba(201,168,76,0.05); transform: translateY(-4px); }
+  .feature-card:hover::after { transform: scaleX(1); }
+
+  .feature-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    display: block;
+    filter: grayscale(0.3);
+  }
+  .feature-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+  .feature-desc {
+    color: var(--parchment-dim);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* ── RULES ── */
+  #rules {
+    background: var(--dark2);
+    max-width: 100%;
+    border-top: 1px solid rgba(201,168,76,0.08);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+  #rules .inner { max-width: 800px; margin: 0 auto; }
+
+  .rules-list {
+    list-style: none;
+    counter-reset: rules;
+  }
+  .rules-list li {
+    counter-increment: rules;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(201,168,76,0.07);
+    transition: all 0.3s;
+  }
+  .rules-list li:last-child { border-bottom: none; }
+  .rules-list li:hover { padding-left: 0.5rem; }
+
+  .rule-num {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.5rem;
+    color: rgba(201,168,76,0.25);
+    min-width: 2rem;
+    line-height: 1.3;
+  }
+  .rule-content h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    color: var(--gold-light);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+  }
+  .rule-content p {
+    color: var(--parchment-dim);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* ── STAFF ── */
+  #staff { position: relative; }
+
+  .staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .staff-card {
+    text-align: center;
+    padding: 2rem 1rem;
+    border: 1px solid rgba(201,168,76,0.1);
+    background: rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .staff-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  }
+  .staff-card:hover { border-color: rgba(201,168,76,0.25); transform: translateY(-3px); }
+
+  .staff-avatar {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--dark3), rgba(139,26,26,0.3));
+    border: 1px solid rgba(201,168,76,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+  .staff-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.1em;
+  }
+  .staff-role {
+    font-size: 0.8rem;
+    color: var(--gold-dim);
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+  .staff-role-owner { color: var(--gold); }
+  .staff-role-admin { color: #b08a3c; }
+  .staff-role-mod { color: #9a7b35; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+  }
+  .footer-tagline {
+    color: var(--parchment-dim);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .footer-rule {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+    margin: 1.5rem auto;
+  }
+  .footer-copy {
+    color: rgba(154,125,94,0.5);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--gold-dim);
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.75rem 2rem;
+    z-index: 200;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.2rem; }
+    .nav-links a { font-size: 0.68rem; letter-spacing: 0.12em; }
+    .corner { width: 70px; height: 70px; }
+    section { padding: 4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">♛ Monarch Domain</div>
+  <ul class="nav-links">
+    <li><a href="#join">Join</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#rules">Rules</a></li>
+    <li><a href="#staff">Staff</a></li>
+    <li><a href="https://discord.gg/EQpmV5CP8V" target="_blank" style="color:var(--gold)!important;">Discord</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="crest-ring"></div>
+  <div class="crest-ring"></div>
+  <div class="crest-ring"></div>
+
+  <!-- Corner ornaments -->
+  <div class="corner corner-tl">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 50" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L50 5" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L25 25" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+      <circle cx="5" cy="5" r="3" fill="#c9a84c"/>
+      <circle cx="5" cy="50" r="2" fill="#c9a84c" opacity="0.5"/>
+      <circle cx="50" cy="5" r="2" fill="#c9a84c" opacity="0.5"/>
+    </svg>
+  </div>
+  <div class="corner corner-tr">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 50" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L50 5" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L25 25" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+      <circle cx="5" cy="5" r="3" fill="#c9a84c"/>
+      <circle cx="5" cy="50" r="2" fill="#c9a84c" opacity="0.5"/>
+      <circle cx="50" cy="5" r="2" fill="#c9a84c" opacity="0.5"/>
+    </svg>
+  </div>
+  <div class="corner corner-bl">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 50" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L50 5" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L25 25" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+      <circle cx="5" cy="5" r="3" fill="#c9a84c"/>
+    </svg>
+  </div>
+  <div class="corner corner-br">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 5 L5 50" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L50 5" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M5 5 L25 25" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+      <circle cx="5" cy="5" r="3" fill="#c9a84c"/>
+    </svg>
+  </div>
+
+  <div class="crown-icon">♛</div>
+  <h1 class="hero-title">Monarch Domain</h1>
+  <p class="hero-subtitle">Survival &nbsp;·&nbsp; SMP &nbsp;·&nbsp; Community</p>
+
+  <div class="divider-ornament">
+    <span>⸻</span>
+    <span>✦</span>
+    <span>⸻</span>
+  </div>
+
+  <p class="hero-tagline">Forge your legacy. Claim your land. Rule the realm.</p>
+
+  <div class="hero-buttons">
+    <button class="btn-primary" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">
+      <span>Join Now</span>
+    </button>
+    <a href="https://discord.gg/EQpmV5CP8V" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;">
+      <span>💬 Discord</span>
+    </a>
+    <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Learn More</button>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</div>
+
+<!-- JOIN -->
+<div id="join">
+  <div class="inner">
+    <div class="section-header">
+      <p class="section-label">Begin Your Reign</p>
+      <h2 class="section-title">Join the Kingdom</h2>
+      <div class="section-rule"><span>✦</span></div>
+    </div>
+
+    <div class="ip-cards">
+      <div class="ip-card">
+        <p class="ip-badge">Platform</p>
+        <p class="ip-type">Java Edition</p>
+        <p class="ip-address">domainsmp21.minekeep.gg</p>
+        <button class="copy-btn" onclick="copyIP(this, 'domainsmp21.minekeep.gg')">Copy IP Address</button>
+      </div>
+      <div class="ip-card">
+        <p class="ip-badge">Platform</p>
+        <p class="ip-type">Bedrock Edition</p>
+        <p class="ip-address">domainsmp21.bedrock.minekeep.gg</p>
+        <button class="copy-btn" onclick="copyIP(this, 'domainsmp21.bedrock.minekeep.gg')">Copy IP Address</button>
+      </div>
+    </div>
+
+    <p class="version-note">Compatible with Java & Bedrock — all players welcome in the realm.</p>
+
+    <div style="text-align:center; margin-top:3rem;">
+      <p class="section-label" style="margin-bottom:1rem;">Community</p>
+      <a href="https://discord.gg/EQpmV5CP8V" target="_blank" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.6rem;font-size:0.85rem;">
+        <span>💬 Join our Discord</span>
+      </a>
+      <p style="margin-top:1rem;color:var(--parchment-dim);font-style:italic;font-size:0.9rem;">discord.gg/EQpmV5CP8V</p>
+    </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-header">
+    <p class="section-label">What Awaits You</p>
+    <h2 class="section-title">The Realm Offers</h2>
+    <div class="section-rule"><span>✦</span></div>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">⚔️</span>
+      <p class="feature-name">Survival SMP</p>
+      <p class="feature-desc">Classic hardcore survival with a living, breathing world shaped by its players.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏰</span>
+      <p class="feature-name">Land Claims</p>
+      <p class="feature-desc">Protect your builds and territory. Your domain, your rules.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🤝</span>
+      <p class="feature-name">Community</p>
+      <p class="feature-desc">A tight-knit kingdom of players working together and competing for glory.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌐</span>
+      <p class="feature-name">Cross-Play</p>
+      <p class="feature-desc">Java and Bedrock players united under one banner, one realm.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🛡️</span>
+      <p class="feature-name">Anti-Grief</p>
+      <p class="feature-desc">Active staff and systems to keep your builds safe from destruction.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📜</span>
+      <p class="feature-name">Events</p>
+      <p class="feature-desc">Regular server events, competitions, and challenges for the worthy.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RULES -->
+<div id="rules">
+  <div class="inner" style="padding: 6rem 2rem;">
+    <div class="section-header">
+      <p class="section-label">The Royal Decree</p>
+      <h2 class="section-title">Laws of the Land</h2>
+      <div class="section-rule"><span>✦</span></div>
+    </div>
+
+    <ul class="rules-list">
+      <li>
+        <span class="rule-num">I</span>
+        <div class="rule-content">
+          <h4>Respect All Players</h4>
+          <p>Treat every member of the realm with dignity. Harassment, slurs, and toxic behaviour will not be tolerated.</p>
+        </div>
+      </li>
+      <li>
+        <span class="rule-num">II</span>
+        <div class="rule-content">
+          <h4>No Griefing or Theft</h4>
+          <p>Destroying others' builds or stealing from unclaimed areas is forbidden. Honour among lords is expected.</p>
+        </div>
+      </li>
+      <li>
+        <span class="rule-num">III</span>
+        <div class="rule-content">
+          <h4>No Cheating or Hacking</h4>
+          <p>Hacked clients, exploits, and unfair advantages are banned outright. Skill defines the true monarch.</p>
+        </div>
+      </li>
+      <li>
+        <span class="rule-num">IV</span>
+        <div class="rule-content">
+          <h4>No Spam or Advertising</h4>
+          <p>Keep chat clean and purposeful. Do not advertise other servers or flood the kingdom's channels.</p>
+        </div>
+      </li>
+      <li>
+        <span class="rule-num">V</span>
+        <div class="rule-content">
+          <h4>Obey the Staff</h4>
+          <p>Decisions made by staff are final. Disputes should be raised respectfully, not contested publicly.</p>
+        </div>
+      </li>
+      <li>
+        <span class="rule-num">VI</span>
+        <div class="rule-content">
+          <h4>Keep It Appropriate</h4>
+          <p>This is a community for all ages. Inappropriate builds, names, or discussions are not permitted.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- STAFF -->
+<section id="staff">
+  <div class="section-header">
+    <p class="section-label">The Royal Court</p>
+    <h2 class="section-title">Staff Team</h2>
+    <div class="section-rule"><span>✦</span></div>
+  </div>
+
+  <div class="staff-grid">
+    <div class="staff-card">
+      <div class="staff-avatar">👑</div>
+      <p class="staff-name">M0NARCH</p>
+      <p class="staff-role staff-role-owner">Owner</p>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar">👑</div>
+      <p class="staff-name">Jec</p>
+      <p class="staff-role staff-role-admin" style="margin-bottom:0.2rem;">Co-Owner</p>
+      <p class="staff-role" style="font-size:0.72rem;opacity:0.6;">@ItsGamer2o23</p>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar">🔧</div>
+      <p class="staff-name">Sinzz</p>
+      <p class="staff-role staff-role-mod">Lead Moderator</p>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar">💻</div>
+      <p class="staff-name">Kyla</p>
+      <p class="staff-role" style="color:#c97ab5;margin-bottom:0.2rem;">Lead Developer</p>
+      <p class="staff-role" style="font-size:0.72rem;opacity:0.6;">equi_nox1</p>
+    </div>
+  </div>
+
+  <p style="text-align:center; margin-top: 2.5rem; color: var(--parchment-dim); font-style: italic; font-size: 0.95rem;">
+    The court that keeps the realm standing.
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-logo">♛ Monarch Domain</p>
+  <p class="footer-tagline">Every empire begins with a single block.</p>
+  <div class="footer-rule"></div>
+  <p class="footer-copy">© 2025 Monarch Domain SMP — All Rights Reserved</p>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✦ IP Copied to Clipboard ✦</div>
+
+<script>
+  // Nav scroll effect
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Copy IP
+  function copyIP(btn, ip) {
+    navigator.clipboard.writeText(ip).then(() => {
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        btn.textContent = 'Copy IP Address';
+        btn.classList.remove('copied');
+        toast.classList.remove('show');
+      }, 2500);
+    });
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feature-card, .ip-card, .staff-card, .rules-list li').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
