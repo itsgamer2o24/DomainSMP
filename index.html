@@ -724,6 +724,92 @@ footer {
   border: 1.5px solid rgba(201,120,20,.3);
 }
 
+
+/* ════════════════════════════════════════
+   COMMANDS
+════════════════════════════════════════ */
+.cmd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+}
+.cmd-category {
+  background: rgba(201,168,76,.03);
+  border: 1px solid rgba(201,168,76,.12);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  transition: border-color .3s, background .3s;
+  position: relative;
+  overflow: hidden;
+}
+.cmd-category::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201,168,76,.3), transparent);
+}
+.cmd-category:hover {
+  border-color: rgba(201,168,76,.28);
+  background: rgba(201,168,76,.06);
+}
+.cmd-category--wide {
+  grid-column: 1 / -1;
+}
+.cmd-cat-header {
+  display: flex; align-items: center; gap: .75rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid rgba(201,168,76,.08);
+}
+.cmd-cat-icon { font-size: 1.2rem; line-height: 1; }
+.cmd-cat-title {
+  font-family: 'Cinzel', serif;
+  font-size: .85rem; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--gold);
+}
+.cmd-list {
+  list-style: none;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+.cmd-list--two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px,100%), 1fr));
+  gap: .5rem;
+}
+.cmd-list li {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem;
+  font-size: clamp(.8rem, 1.8vw, .88rem);
+}
+.cmd-list code {
+  font-family: 'Courier New', monospace;
+  font-size: clamp(.78rem, 1.7vw, .86rem);
+  color: var(--white);
+  background: rgba(0,0,0,.35);
+  padding: .25rem .6rem;
+  border-left: 2px solid var(--gold-dim);
+  white-space: nowrap;
+}
+.cmd-arg { color: var(--gold-light); font-style: italic; }
+.cmd-badge {
+  font-family: 'Cinzel', serif;
+  font-size: .6rem; letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  background: rgba(139,26,26,.15);
+  border: 1px solid rgba(139,26,26,.3);
+  padding: .15rem .5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.cmd-note {
+  font-size: .75rem; color: var(--parchment-dim);
+  font-style: italic;
+}
+.cmd-admin code { border-left-color: rgba(139,26,26,.5); }
+
+@media (max-width: 480px) {
+  .cmd-list--two-col { grid-template-columns: 1fr; }
+  .cmd-list code { white-space: normal; word-break: break-all; }
+}
+
 </style>
 </head>
 <body>
@@ -738,6 +824,7 @@ footer {
     <li><a href="#" onclick="showPage('main','features');return false;">Features</a></li>
     <li><a href="#" onclick="showPage('main','rules');return false;">Rules</a></li>
     <li><a href="#" onclick="showPage('main','staff');return false;">Staff</a></li>
+    <li><a href="#" onclick="showPage('main','commands');return false;">Commands</a></li>
     <li><a href="https://discord.gg/EQpmV5CP8V" target="_blank" rel="noopener" class="nav-discord">Discord</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -752,6 +839,7 @@ footer {
     <li><a href="#" class="mob-link" onclick="showPage('main','features');return false;">Features</a></li>
     <li><a href="#" class="mob-link" onclick="showPage('main','rules');return false;">Rules</a></li>
     <li><a href="#" class="mob-link" onclick="showPage('main','staff');return false;">Staff</a></li>
+    <li><a href="#" class="mob-link" onclick="showPage('main','commands');return false;">Commands</a></li>
     <li><a href="https://discord.gg/EQpmV5CP8V" target="_blank" rel="noopener" class="mob-link discord-link">💬 Discord</a></li>
   </ul>
 </div>
@@ -888,6 +976,115 @@ footer {
       <div class="staff-card"><div class="staff-avatar" aria-hidden="true">💻</div><p class="staff-name">Kyla</p><p class="staff-role role-dev">Lead Developer</p><p class="staff-role staff-handle">equi_nox1</p></div>
     </div>
     <p class="staff-caption">The court that keeps the realm standing.</p>
+  </section>
+
+
+  <!-- COMMANDS -->
+  <section id="commands" class="sec" aria-labelledby="cmd-title">
+    <div class="section-header">
+      <p class="section-label">⛏ Server Commands</p>
+      <h2 class="section-title" id="cmd-title">Command Reference</h2>
+      <div class="section-rule" aria-hidden="true"><span>✦</span></div>
+    </div>
+    <div class="cmd-grid">
+
+      <div class="cmd-category">
+        <div class="cmd-cat-header">
+          <span class="cmd-cat-icon">🔗</span>
+          <h3 class="cmd-cat-title">DiscordSRV</h3>
+        </div>
+        <ul class="cmd-list">
+          <li><code>/discordsrv link</code></li>
+          <li><code>/discordsrv unlink</code></li>
+        </ul>
+      </div>
+
+      <div class="cmd-category">
+        <div class="cmd-cat-header">
+          <span class="cmd-cat-icon">❤️</span>
+          <h3 class="cmd-cat-title">LifeSteal</h3>
+        </div>
+        <ul class="cmd-list">
+          <li><code>/lifestealz recipe defaultheart</code></li>
+          <li><code>/lifestealz recipe revive</code></li>
+          <li><code>/withdrawheart</code></li>
+        </ul>
+      </div>
+
+      <div class="cmd-category">
+        <div class="cmd-cat-header">
+          <span class="cmd-cat-icon">📡</span>
+          <h3 class="cmd-cat-title">TPA</h3>
+        </div>
+        <ul class="cmd-list">
+          <li><code>/tpa <span class="cmd-arg">{player_name}</span></code></li>
+          <li><code>/tpaaccept</code></li>
+          <li><code>/tpacancel</code></li>
+        </ul>
+      </div>
+
+      <div class="cmd-category">
+        <div class="cmd-cat-header">
+          <span class="cmd-cat-icon">🤝</span>
+          <h3 class="cmd-cat-title">Trade</h3>
+        </div>
+        <ul class="cmd-list">
+          <li><code>/trade <span class="cmd-arg">{player_name}</span></code></li>
+          <li><code>/trade accept <span class="cmd-arg">{player_name}</span></code></li>
+          <li><code>/trade cancel</code></li>
+        </ul>
+      </div>
+
+      <div class="cmd-category">
+        <div class="cmd-cat-header">
+          <span class="cmd-cat-icon">🏠</span>
+          <h3 class="cmd-cat-title">Essentials</h3>
+        </div>
+        <ul class="cmd-list">
+          <li><code>/sethome</code></li>
+          <li><code>/delhome</code></li>
+          <li><code>/home</code></li>
+        </ul>
+      </div>
+
+      <div class="cmd-category cmd-category--wide">
+        <div class="cmd-cat-header">
+          <span class="cmd-cat-icon">🛡️</span>
+          <h3 class="cmd-cat-title">Team</h3>
+        </div>
+        <ul class="cmd-list cmd-list--two-col">
+          <li><code>/team create</code></li>
+          <li><code>/team chat</code></li>
+          <li><code>/team home</code></li>
+          <li><code>/team join <span class="cmd-arg">{team_name}</span></code></li>
+          <li><code>/team leave</code></li>
+          <li><code>/team list</code></li>
+          <li><code>/team name</code></li>
+          <li><code>/team tag</code></li>
+          <li><code>/team info <span class="cmd-arg">{team_name}</span></code></li>
+          <li class="cmd-admin"><code>/team ally <span class="cmd-arg">{other_team}</span></code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team ban <span class="cmd-arg">{player_name}</span></code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team unban</code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team kick</code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team invite</code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team promote</code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team demote</code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team sethome</code> <span class="cmd-badge">Owner / Admin</span></li>
+          <li class="cmd-admin"><code>/team delhome</code> <span class="cmd-badge">Owner / Admin</span></li>
+        </ul>
+      </div>
+
+      <div class="cmd-category">
+        <div class="cmd-cat-header">
+          <span class="cmd-cat-icon">✅</span>
+          <h3 class="cmd-cat-title">Discord Verify</h3>
+        </div>
+        <ul class="cmd-list">
+          <li><code>!verify</code> <span class="cmd-note">in Discord</span></li>
+        </ul>
+      </div>
+
+    </div>
   </section>
 
   <!-- FOOTER (main) -->
